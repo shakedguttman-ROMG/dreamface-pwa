@@ -1,0 +1,4 @@
+node_modules/
+gen_icons.py
+models/inswapper_128.onnx
+*.log
