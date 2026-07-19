@@ -9,7 +9,7 @@
 
 const MODELS_URL = './models';
 const INSWAPPER_URL = 'https://huggingface.co/ezioruan/inswapper_128.onnx/resolve/main/inswapper_128.onnx';
-const ort = window.ort;
+const ORT = window.ort || self.ort;
 
 // ── DOM refs ──────────────────────────────────────────────────────────────
 const $ = (id) => document.getElementById(id);
@@ -56,9 +56,9 @@ async function initNeural() {
   try {
     if (!window.ort) { toast('ספריית עיבוד לא נטענה', true); return; }
     setModelStatus('load', 'טוען מודל נוירוני (~530MB, פעם ראשונה מקוון)…');
-    ort.env.wasm.wasmPaths = './vendor/';
-    ort.env.wasm.simd = true;
-    ort.env.wasm.numThreads = Math.min(4, navigator.hardwareConcurrency || 2);
+    ORT.env.wasm.wasmPaths = './vendor/';
+    ORT.env.wasm.simd = true;
+    ORT.env.wasm.numThreads = Math.min(4, navigator.hardwareConcurrency || 2);
     let buf;
     // try cache-first
     try {
@@ -73,7 +73,7 @@ async function initNeural() {
       const r = await fetch(INSWAPPER_URL);
       buf = await r.arrayBuffer();
     }
-    session = await ort.InferenceSession.create(buf, { executionProviders: ['wasm'], graphOptimizationLevel: 'all' });
+    session = await ORT.InferenceSession.create(buf, { executionProviders: ['wasm'], graphOptimizationLevel: 'all' });
     neuralReady = true;
     setModelStatus('ok', 'מודל נוירוני מוכן ✓');
   } catch (e) {
@@ -253,7 +253,7 @@ function imgToTensor(canvas) {
     data[N + i] = id.data[i * 4 + 1] / 255;         // G
     data[2 * N + i] = id.data[i * 4 + 2] / 255;     // B
   }
-  return new ort.Tensor('float32', data, [1, 3, canvas.height, canvas.width]);
+  return new ORT.Tensor('float32', data, [1, 3, canvas.height, canvas.width]);
 }
 
 function tensorToCanvas(tensor, size) {

@@ -1,5 +1,5 @@
 // DreamFace service worker — offline-first (שקט: אין לוגים מיותרים)
-const CACHE = 'dreamface-v1';
+const CACHE = 'dreamface-v2';
 const ASSETS = [
   './',
   './index.html',
